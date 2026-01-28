@@ -1,0 +1,12 @@
+services:
+    ldap:
+        image: alpine
+        container_name: server-ldap
+        ports: 
+            - "389:389"
+        command: >
+            sh -c "apk update &&
+                    apk add openldap openldap-clients openldap-back-mdb &&
+                    mkdir -p /run/openldap /var/lib/openldap /etc/openldap/slapd.d &&
+                    chown -R ldap:ldap /run/openldap /var/lib/openldap /etc/openldap/slapd.d &&
+                    slapd -h 'ldap:/// ldapi:///' -u ldap -g ldap -d stats"

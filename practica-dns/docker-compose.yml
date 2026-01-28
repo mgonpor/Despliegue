@@ -1,0 +1,45 @@
+services:
+    bind9:
+        image: alpine
+        container_name: server-dns
+        user: root
+        ports:
+            - "53:53/udp"
+            - "53:53/tcp"
+        volumes: 
+            - ./bind:/tmp/bind_mount
+        command: >
+            sh -c "apk add --no-cache bind bind-tools &&
+                     mkdir -p /etc/bind /var/cache/bind &&
+                     cp /tmp/bind_mount/* /etc/bind/ &&
+                     chmod -R 777 /etc/bind /var/cache/bind &&
+                     chown -R named:named /etc/bind /var/cache/bind &&
+                     named -4 -g -c /etc/bind/named.conf"
+        networks:
+            red-empresa:
+                ipv4_address: 172.20.0.2  # IP fija para el DNS
+    apache2:
+        image: alpine
+        container_name: server-apache
+        ports:
+            - "80:80"
+        volumes:
+            - ./apache/www:/var/www
+            - ./apache/conf/vhosts.conf:/etc/apache2/conf.d/vhosts.conf
+        command: >
+            sh -c "apk add --no-cache apache2 &&
+                    mkdir -p /run/apache2 &&
+                    httpd -D FOREGROUND"
+        networks:
+            red-empresa:
+                ipv4_address: 172.20.0.3
+        depends_on:
+            - bind9
+networks:
+  red-empresa:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
