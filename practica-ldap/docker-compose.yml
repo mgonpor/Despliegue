@@ -1,12 +1,26 @@
 services:
-    ldap:
-        image: alpine
-        container_name: server-ldap
+    openldap:
+        image: osixia/openldap
+        container_name: openldap
+        environment:
+            LDAP_ORGANISATION: "IES Los Alcores"
+            LDAP_DOMAIN: "escuela.edu"
+            LDAP_ADMIN_PASSWORD: "admin123"
         ports: 
             - "389:389"
-        command: >
-            sh -c "apk update &&
-                    apk add openldap openldap-clients openldap-back-mdb &&
-                    mkdir -p /run/openldap /var/lib/openldap /etc/openldap/slapd.d &&
-                    chown -R ldap:ldap /run/openldap /var/lib/openldap /etc/openldap/slapd.d &&
-                    slapd -h 'ldap:/// ldapi:///' -u ldap -g ldap -d stats"
+        volumes:
+            - ./ldap-data:/var/lib/ldap
+            - ./ldap-config:/etc/ldap/sldap.d
+            - ./ldif:/ldif
+        restart: unless-stopped
+
+    phpldapadmin:
+        image: osixia/phpldapadmin
+        container_name: phpldapadmin
+        environment:
+            PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+        ports:
+            - "8080:80"
+        depends_on:
+            - openldap
+        restart: unless-stopped
