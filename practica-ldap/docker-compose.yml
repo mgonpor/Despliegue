@@ -4,8 +4,9 @@ services:
         container_name: openldap
         environment:
             LDAP_ORGANISATION: "IES Los Alcores"
-            LDAP_DOMAIN: "escuela.edu"
+            LDAP_DOMAIN: "ies.alcores"
             LDAP_ADMIN_PASSWORD: "admin123"
+            LDAP_TLS: "false"
         ports: 
             - "389:389"
         volumes:
@@ -18,7 +19,9 @@ services:
         image: osixia/phpldapadmin
         container_name: phpldapadmin
         environment:
+            PHPLDAPADMIN_HTTPS: "false"
             PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+            PHPLDAPADMIN_SERVER_ADMIN_BINDS_PATH: "cn=admin,dc=ies,dc=alcores"
         ports:
             - "8080:80"
         depends_on:
