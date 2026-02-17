@@ -1,11 +1,14 @@
 spring:
+  config:
+    activate:
+      on-profile: pro
   application:
     name: railway
 
   datasource:
-    url: jdbc:mysql://localhost:3310/railway?createDatabaseIfNotExists=true
-    username: admin
-    password: admin
+    url: jdbc:mysql://mysql.railway.internal:3306/railway
+    username: root
+    password: vlekUzMExjTxetLSqNKNbmCWldkIMfOt
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
