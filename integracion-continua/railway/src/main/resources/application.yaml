@@ -3,7 +3,7 @@ spring:
     name: railway
 
   datasource:
-    url: jdbc:mysql://localhost:3310/railway?createDatabaseIfNotExists=true
+    url: jdbc:mysql://localhost:3308/railway?createDatabaseIfNotExists=true
     username: admin
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
